@@ -8,7 +8,7 @@ import json
 app = Flask(__name__)
 
 # OpenAI API anahtarı
-os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = "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"
 openai_api_key = os.environ.get("OPENAI_API_KEY", None)
 
 # Veri yükleme ve indeks oluşturma
