@@ -1,18 +1,18 @@
-from flask import Flask, request, jsonify
+from flask import Flask, render_template, request, jsonify
 from langchain.document_loaders import UnstructuredPDFLoader
 from langchain.indexes import VectorstoreIndexCreator
 from unidecode import unidecode
-from flask_cors import CORS
 import os
+import json
 
 app = Flask(__name__)
-CORS(app)  # CORS politikalarını etkinleştir
+
 # OpenAI API anahtarı
 os.environ["OPENAI_API_KEY"] = "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"
 openai_api_key = os.environ.get("OPENAI_API_KEY", None)
 
 # Veri yükleme ve indeks oluşturma
-root_dir = "C:\\Users\\sanemk\\Desktop\\colab\\CHATBOT\\content\\gdrive\\MyDrive"
+root_dir = "C:\\Users\\sanemk\\Desktop\\colab\\CHATBOT\\content\\gdrive\\MyDrive" 
 pdf_folder_path = os.path.join(root_dir, 'data')
 
 
@@ -26,20 +26,13 @@ def home():
 
 @app.route('/query', methods=['POST'])
 def query():
-    if request.method == 'POST':
-        try:
-            data = request.json
-            query_text = data['query']
+    query_text = request.form['query']
+    result = index.query(query_text)
 
-            result = index.query(query_text)
-
-            # Encode as UTF-8 and then decode
-            result_ascii = unidecode(result)
-
-            return jsonify({'result': result_ascii})
-
-        except Exception as e:
-            return jsonify({'error': str(e)}), 400
+    # Encode as UTF-8 and then decode 
+    result_ascii = unidecode(result)
+    
+    return jsonify({'result': result_ascii})
 
 if __name__ == '__main__':
     app.run(debug=True)
